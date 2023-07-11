@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import (
     QApplication, QLabel, QWidget, QLineEdit, QPushButton, QMessageBox, QCheckBox)
 
 from registro import RegistrarUsuarioView
+from main import MainWindow
 
 from PyQt6.QtGui import QFont, QPixmap
 
@@ -51,7 +52,7 @@ class Login(QWidget):
         login_button.setText("Login")
         login_button.resize(320, 34)
         login_button.move(20, 140)
-        login_button.clicked.connect(self.iniciar_mainview)
+        login_button.clicked.connect(self.login)
 
         register_button = QPushButton(self)
         register_button.setText("Registrate")
@@ -65,12 +66,43 @@ class Login(QWidget):
         else:
             self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
 
-    def iniciar_mainview(self):
-        pass
+    def login(self):
+        users = []
+        user_path = 'login/usuarios.txt'
+
+        try:
+
+            with open(user_path, 'r') as f:
+                for linea in f:
+                    users.append(linea.strip("\n"))
+
+            login_information = f"{self.user_input.text()},{self.password_input.text()}"
+
+            if login_information in users:
+                QMessageBox.information(self, 'Inicio sesion', 'Inicio de sesion exitoso',
+                                        QMessageBox.StandardButton.Ok, QMessageBox.StandardButton.Ok)
+                self.is_logged = True
+                self.close()
+                self.open_main_window()
+            else:
+                QMessageBox.warning(self, 'Error Message', 'Credenciales incorrectas',
+                                    QMessageBox.StandardButton.Close, QMessageBox.StandardButton.Close)
+
+        except FileNotFoundError as e:
+            QMessageBox.warning(self, 'Error Message', f'Base de datos de usuario no encontrada: {e}',
+                                QMessageBox.StandardButton.Close, QMessageBox.StandardButton.Close)
+
+        except Exception as e:
+            QMessageBox.warning(self, 'Error Message', 'Error en el servidor',
+                                QMessageBox.StandardButton.Close, QMessageBox.StandardButton.Close)
 
     def registrar_usuario(self):
         self.new_user_form = RegistrarUsuarioView()
         self.new_user_form.show()
+
+    def open_main_window(self):
+        self.open_main_window = MainWindow()
+        self.open_main_window.show()
 
 
 if __name__ == '__main__':
