@@ -1,6 +1,9 @@
 import sys
 from PyQt6.QtWidgets import (
     QApplication, QLabel, QWidget, QLineEdit, QPushButton, QMessageBox, QCheckBox)
+
+from registro import RegistrarUsuarioView
+
 from PyQt6.QtGui import QFont, QPixmap
 
 
@@ -42,7 +45,7 @@ class Login(QWidget):
         self.check_view_password = QCheckBox(self)
         self.check_view_password.setText("Ver Contraseña")
         self.check_view_password.move(90, 110)
-        self.check_view_password.clicked.connect(self.mostrar_contrasena)
+        self.check_view_password.toggled.connect(self.mostrar_contrasena)
 
         login_button = QPushButton(self)
         login_button.setText("Login")
@@ -56,14 +59,18 @@ class Login(QWidget):
         register_button.move(20, 180)
         register_button.clicked.connect(self.registrar_usuario)
 
-    def mostrar_contrasena(self):
-        pass
+    def mostrar_contrasena(self, clicked):
+        if clicked:
+            self.password_input.setEchoMode(QLineEdit.EchoMode.Normal)
+        else:
+            self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
 
     def iniciar_mainview(self):
         pass
 
     def registrar_usuario(self):
-        pass
+        self.new_user_form = RegistrarUsuarioView()
+        self.new_user_form.show()
 
 
 if __name__ == '__main__':
